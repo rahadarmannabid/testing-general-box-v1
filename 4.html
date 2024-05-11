@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Page Survey</title>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #questionContainer {
+            margin-bottom: 20px;
+        }
+
+        #questionContainer label {
+            display: inline-block;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            width: 50%; /* Adjust the width as needed */
+            box-sizing: border-box;
+        }
+
+        #questionContainer label:hover {
+            transform: scale(1.05);
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .image-container {
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+        }
+
+        .image-container img {
+            display: block;
+            width: 50%; /* Full width images */
+            height: auto; /* Maintains aspect ratio */
+            border-radius: 10px 10px 0 0;
+            margin: 0 auto; /* Auto margins for horizontal centering */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-container">
+            <img src="Box-Quiz-A.png" alt="Consent Form Image">
+        </div>
+        <p>
+            Try to answer the following questions (8 questions) based on the box plot shown above. Each question will have multiple choice answers. Click "Next" to proceed to the next question. You can skip a question if you are unsure of the answer.
+        </p>
+        
+        <form id="nextSurveyForm">
+            <div id="questionContainer"></div>
+            <div style="text-align: center;">
+                <button type="button" onclick="handleNextClick()">Next</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        firebase.initializeApp({
+            apiKey: "AIzaSyAKfpkptdlkB6C51MLxAgRFwYCFpxa9zaM",
+            authDomain: "eg-1-testing-general-box.firebaseapp.com",
+            projectId: "eg-1-testing-general-box",
+            storageBucket: "eg-1-testing-general-box.appspot.com",
+            messagingSenderId: "86498442548",
+            appId: "1:86498442548:web:75448f4aefbd68d8a47961",
+            measurementId: "G-ENVBCE2Z0M"
+        });
+        const database = firebase.database();
+
+        function getCookie(name) {
+            let cookieArray = document.cookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+                let cookiePair = cookieArray[i].split('=');
+                if (name == cookiePair[0].trim()) {
+                    return cookiePair[1];
+                }
+            }
+            return null;
+        }
+
+        let userId = getCookie('userId');
+        if (!userId) {
+            userId = 'user_' + Date.now();
+            document.cookie = "userId=" + userId + "; path=/";
+        }
+
+        let startTime = Date.now();
+        let currentQuestionIndex = 0;
+        const questions = [
+            { question: "Which of the following axes can be considered as continuous variables?", options: ["Growth Percentage", "States Name", "Skip"] },
+            { question: "For Queensland (QLD) what is the region encompassing its interquartile range?", options: ["0.055-0.065%", "0.060-0.090%", "0.045-0.090%", "0.022-0.12%", "Skip"] },
+            { question: "Which state has the 2nd highest median growth percentage?", options: ["NSW (New South Wales)", "VIC (Victoria)", "QLD (Queensland WA)", "WA (Western Australia)", "Skip"] },
+            { question: "Which points can be considered as extrema for the Western Australia (WA) category?", options: ["0.0", "0.003", "0.040", "0.064", "Skip"] },
+            { question: "Which points can be considered outliers (a point is denoted as growth percentage, state)?", options: ["0.097%, QLD", "0.045%, VIC", "0.045%, QLD", "0.079%, VLC", "Skip"] },
+            { question: "Which state has the most negative skew?", options: ["QLD (Queensland WA)", "WA (Western Australia)", "NSW (New South Wales)", "VIC (Victoria)", "Skip"] },
+            { question: "True or False: The mean growth percentage of Western Australia (WA) is higher than New South Wales (NSW)", options: ["True", "False", "Skip"] },
+            { question: "What can be inferred from the boxplot about the growth percentage across the states NSW, QLD, VIC, and WA?", options: [
+                "NSW has the least variability in growth percentages, with most data points closely clustered around the median.",
+                "VIC has a higher median growth percentage compared to QLD and WA, with some outliers indicating occasional higher growth percentages.",
+                "QLD has the widest interquartile range, suggesting that it has the most consistent growth percentage.",
+                "WA has a relatively lower median growth percentage, with a small interquartile range, indicating less variability in growth percentages compared to other states.", "Skip"
+            ]}
+        ];
+
+        function handleNextClick() {
+            if (currentQuestionIndex > 0) { 
+                let selectedAnswer = document.querySelector('input[name="answer"]:checked')?.value;
+                if (!selectedAnswer) {
+                    alert('Please make a selection before proceeding.');
+                    return;
+                }
+                submitResponse(selectedAnswer);
+            } else {
+                loadNextQuestion(); 
+            }
+        }
+
+        function submitResponse(selectedAnswer) {
+            const endTime = Date.now();
+            const timeSpent = (endTime - startTime) / 1000;
+            const question = questions[currentQuestionIndex - 1];
+            database.ref('responses/' + userId).push({
+                question: question.question,
+                answer: selectedAnswer,
+                timeSpent: timeSpent,
+                timestamp: new Date().toISOString()
+            }).then(() => {
+                console.log('Response saved successfully.');
+                if (currentQuestionIndex < questions.length) {
+                    loadNextQuestion();
+                } else {
+                    window.location.href = '5.html'; 
+                }
+            }).catch(error => {
+                alert('Error saving response: ' + error.message);
+            });
+        }
+
+        function loadNextQuestion() {
+            const questionContainer = document.getElementById('questionContainer');
+            const question = questions[currentQuestionIndex];
+            let questionHtml = `<p>${question.question}</p>`;
+            question.options.forEach((option, index) => {
+                questionHtml += `<input type="radio" id="option${index}" name="answer" value="${option}">
+                                <label for="option${index}" style="animation: fadeIn 0.5s;">${option}</label><br>`;
+            });
+            questionContainer.innerHTML = questionHtml;
+            currentQuestionIndex++;
+        }
+    </script>
+</body>
+</html>

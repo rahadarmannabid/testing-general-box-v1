@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not Eligible</title>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex; /* Establishes a flex container */
+            justify-content: center; /* Centers children horizontally */
+            align-items: center; /* Centers children vertically */
+            min-height: 100vh; /* Full viewport height */
+        }
+
+        .container {
+            width: 1000px; /* Adjusted width for better control */
+            max-width: 85%; /* Ensures container does not exceed 90% of viewport width */
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .text-container {
+            background-color: #ffffff;
+            color: #606060;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            text-align: center; /* Ensures the message is centered */
+        }
+
+        input[type="text"] {
+            width: 100%; /* Full-width inputs */
+            padding: 10px;
+            margin: 10px 0; /* Spacing between inputs */
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px; /* Rounded borders on inputs */
+            box-sizing: border-box; /* Sizes the borders and padding inside the width and height */
+        }
+
+        button {
+            width: 100%; /* Full width button */
+            background-color: #4CAF50; /* Professional green color */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px; /* Rounded corners for buttons */
+        }
+
+        button:hover {
+            background-color: #45a049; /* Darker green on hover for better user experience */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-container">
+            <p>Thank you so much for your participation. We will reach you out if your are eligibale to the main user experiment.</p>
+            <form>
+                <input type="text" id="prolificId" name="prolificId" placeholder="Enter your Prolific ID here" required>
+                <button type="button" onclick="saveProlificId()">Submit ID</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Initialize Firebase
+        firebase.initializeApp({
+            apiKey: "AIzaSyDHbDwI2hiUuzbYu2HnDUoHsMZlG2FXHSA",
+            authDomain: "eg-1-screening-box.firebaseapp.com",
+            projectId: "eg-1-screening-box",
+            storageBucket: "eg-1-screening-box.appspot.com",
+            messagingSenderId: "383916013180",
+            appId: "1:383916013180:web:563bc1b4df4ae0b749bbf9",
+            measurementId: "G-2XS5GDDQMW"
+        });
+        
+        const database = firebase.database();
+
+        function saveProlificId() {
+            const prolificId = document.getElementById('prolificId').value;
+            if (prolificId) {
+                database.ref('prolificIds').push({
+                    prolificId: prolificId,
+                    timestamp: new Date().toISOString()
+                }).then(() => {
+                    alert('Prolific ID saved successfully.');
+                }).catch(error => {
+                    alert('Error saving Prolific ID: ' + error.message);
+                });
+            } else {
+                alert('Please enter your Prolific ID.');
+            }
+        }
+    </script>
+</body>
+</html>
