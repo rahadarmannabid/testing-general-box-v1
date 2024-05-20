@@ -90,11 +90,12 @@
             <img src="Box-Quiz-A.png" alt="Consent Form Image">
         </div>
         <p>
-            Try to answer the following questions (8 questions) based on the box plot shown above. Each question will have multiple choice answers. Click "Next" to proceed to the next question. You can skip a question if you are unsure of the answer.
-        </p>
+           <i> Try to answer the following questions (8 questions) based on the box plot shown above. Each question will have multiple choice answers. Click "Next" to proceed to the next question. You can skip a question if you are unsure of the answer.
+        
+           </i>        </p>
         
         <form id="nextSurveyForm">
-            <div id="questionContainer"></div>
+            <b><div id="questionContainer"></div></b>
             <div style="text-align: center;">
                 <button type="button" onclick="handleNextClick()">Next</button>
             </div>
@@ -133,18 +134,18 @@
         let startTime = Date.now();
         let currentQuestionIndex = 0;
         const questions = [
-            { question: "Which of the following axes can be considered as continuous variables?", options: ["Growth Percentage", "States Name", "Skip"] },
-            { question: "For Queensland (QLD) what is the region encompassing its interquartile range?", options: ["0.055-0.065%", "0.060-0.090%", "0.045-0.090%", "0.022-0.12%", "Skip"] },
-            { question: "Which state has the 2nd highest median growth percentage?", options: ["NSW (New South Wales)", "VIC (Victoria)", "QLD (Queensland WA)", "WA (Western Australia)", "Skip"] },
+            { question: "Which of the following axes can be considered as continuous variables?", options: ["Growth Percentage", "States Name"] },
+            { question: "For Queensland (QLD) what is the region encompassing its interquartile range?", options: ["0.055-0.065%", "0.060-0.090%", "0.045-0.090%", "0.022-0.12%"] },
+            { question: "Which state has the 2nd highest median growth percentage?", options: ["NSW (New South Wales)", "VIC (Victoria)", "QLD (Queensland WA)", "WA (Western Australia)"] },
             { question: "Which points can be considered as extrema for the Western Australia (WA) category?", options: ["0.0", "0.003", "0.040", "0.064", "Skip"] },
-            { question: "Which points can be considered outliers (a point is denoted as growth percentage, state)?", options: ["0.097%, QLD", "0.045%, VIC", "0.045%, QLD", "0.079%, VLC", "Skip"] },
-            { question: "Which state has the most negative skew?", options: ["QLD (Queensland WA)", "WA (Western Australia)", "NSW (New South Wales)", "VIC (Victoria)", "Skip"] },
-            { question: "True or False: The mean growth percentage of Western Australia (WA) is higher than New South Wales (NSW)", options: ["True", "False", "Skip"] },
+            { question: "Which points can be considered outliers (a point is denoted as growth percentage, state)?", options: ["0.097%, QLD", "0.045%, VIC", "0.045%, QLD", "0.079%, VLC"] },
+            { question: "Which state has the most negative skew?", options: ["QLD (Queensland WA)", "WA (Western Australia)", "NSW (New South Wales)", "VIC (Victoria)"] },
+            { question: "True or False: The mean growth percentage of Western Australia (WA) is higher than New South Wales (NSW)", options: ["True", "False"] },
             { question: "What can be inferred from the boxplot about the growth percentage across the states NSW, QLD, VIC, and WA?", options: [
                 "NSW has the least variability in growth percentages, with most data points closely clustered around the median.",
                 "VIC has a higher median growth percentage compared to QLD and WA, with some outliers indicating occasional higher growth percentages.",
                 "QLD has the widest interquartile range, suggesting that it has the most consistent growth percentage.",
-                "WA has a relatively lower median growth percentage, with a small interquartile range, indicating less variability in growth percentages compared to other states.", "Skip"
+                "WA has a relatively lower median growth percentage, with a small interquartile range, indicating less variability in growth percentages compared to other states."
             ]}
         ];
 
