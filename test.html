@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Not Eligible</title>
+    <title>Next Page Survey</title>
     <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
     <style>
@@ -12,42 +12,22 @@
             background-color: #f5f5f5;
             margin: 0;
             padding: 0;
-            display: flex; /* Establishes a flex container */
-            justify-content: center; /* Centers children horizontally */
-            align-items: center; /* Centers children vertically */
-            min-height: 100vh; /* Full viewport height */
         }
-
         .container {
-            width: 1000px; /* Adjusted width for better control */
-            max-width: 85%; /* Ensures container does not exceed 90% of viewport width */
+            max-width: 800px;
+            margin: 20px auto;
             background-color: #fff;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s;
         }
-
-        .text-container {
-            background-color: #ffffff;
-            color: #606060;
-            padding: 20px;
-            border-radius: 0 0 10px 10px;
-            text-align: center; /* Ensures the message is centered */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-
-        input[type="text"] {
-            width: 100%; /* Full-width inputs */
-            padding: 10px;
-            margin: 10px 0; /* Spacing between inputs */
-            display: inline-block;
-            border: 1px solid #ccc;
-            border-radius: 4px; /* Rounded borders on inputs */
-            box-sizing: border-box; /* Sizes the borders and padding inside the width and height */
-        }
-
         button {
-            width: 100%; /* Full width button */
-            background-color: #4CAF50; /* Professional green color */
+            background-color: #4CAF50;
             border: none;
             color: white;
             padding: 10px 20px;
@@ -55,55 +35,169 @@
             text-decoration: none;
             display: inline-block;
             font-size: 16px;
-            margin: 4px 2px;
+            margin: 10px 2px;
             cursor: pointer;
-            border-radius: 5px; /* Rounded corners for buttons */
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
         }
-
         button:hover {
-            background-color: #45a049; /* Darker green on hover for better user experience */
+            background-color: #45a049;
+        }
+        #questionContainer {
+            margin-bottom: 20px;
+        }
+        #questionContainer label {
+            display: inline-block;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            width: 50%; /* Adjust the width as needed */
+            box-sizing: border-box;
+        }
+        #questionContainer label:hover {
+            transform: scale(1.05);
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        .image-container {
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+        }
+        .image-container img {
+            display: block;
+            width: 90%; /* Full width images */
+            height: auto; /* Maintains aspect ratio */
+            border-radius: 10px 10px 0 0;
+            margin: 0 auto; /* Auto margins for horizontal centering */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="text-container">
-            <p>Thank you so much for your participation. We will reach you out if your are eligibale to the main user experiment.</p>
-            <form>
-                <input type="text" id="prolificId" name="prolificId" placeholder="Enter your Prolific ID here" required>
-                <button type="button" onclick="saveProlificId()">Submit ID</button>
-            </form>
-        </div>
+        <form id="nextSurveyForm">
+            <div id="questionContainer"></div>
+            <div style="text-align: center;">
+                <button type="button" onclick="handleNextClick()">Next</button>
+            </div>
+        </form>
     </div>
+
     <script>
+        // Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAKfpkptdlkB6C51MLxAgRFwYCFpxa9zaM",
+  authDomain: "eg-1-testing-general-box.firebaseapp.com",
+  projectId: "eg-1-testing-general-box",
+  storageBucket: "eg-1-testing-general-box.appspot.com",
+  messagingSenderId: "86498442548",
+  appId: "1:86498442548:web:75448f4aefbd68d8a47961",
+  measurementId: "G-ENVBCE2Z0M"
+        };
+
         // Initialize Firebase
-        firebase.initializeApp({
-            apiKey: "AIzaSyDHbDwI2hiUuzbYu2HnDUoHsMZlG2FXHSA",
-            authDomain: "eg-1-screening-box.firebaseapp.com",
-            projectId: "eg-1-screening-box",
-            storageBucket: "eg-1-screening-box.appspot.com",
-            messagingSenderId: "383916013180",
-            appId: "1:383916013180:web:563bc1b4df4ae0b749bbf9",
-            measurementId: "G-2XS5GDDQMW"
-        });
-        
+        firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        function saveProlificId() {
-            const prolificId = document.getElementById('prolificId').value;
-            if (prolificId) {
-                database.ref('prolificIds').push({
-                    prolificId: prolificId,
-                    timestamp: new Date().toISOString()
-                }).then(() => {
-                    alert('Prolific ID saved successfully.');
-                }).catch(error => {
-                    alert('Error saving Prolific ID: ' + error.message);
-                });
+        function getCookie(name) {
+            let cookieArray = document.cookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+                let cookiePair = cookieArray[i].split('=');
+                if (name == cookiePair[0].trim()) {
+                    return cookiePair[1];
+                }
+            }
+            return null;
+        }
+
+        let userId = getCookie('userId');
+        if (!userId) {
+            userId = 'user_' + Date.now();
+            document.cookie = "userId=" + userId + "; path=/";
+        }
+
+        let startTime = Date.now();
+        let currentQuestionIndex = 0;
+        const questions = [
+            { question: "What is your current education level?", options: ["High School", "Associate Degree", "Bachelor's Degree", "Master's Degree", "Doctorate or Higher", "Other"], type: "radio" },
+            { question: "What is your level of expertise in interpreting these data visualizations?", options: ["Beginner", "Intermediate", "Advanced", "Expert"], type: "radio" },
+            { question: "Have you taken any courses on data visualization?", options: ["Yes", "No"], type: "radio" },
+            { question: "Have you frequently seen data visualizations on different news portals like the New York Times or the Washington Post?", options: ["Yes", "No"], type: "radio" },
+            { question: "On average, how many data visualization charts do you see daily?", options: ["0-1", "2-5", "6-10", "More than 10"], type: "radio" },
+            { question: "How beneficial are the explanations in the user experiment for learning data visualization?", options: ["Not beneficial", "Slightly beneficial", "Moderately beneficial", "Very beneficial", "Extremely beneficial"], type: "radio" },
+            { question: "How engaging are the explanations?", options: ["Not engaging", "Slightly engaging", "Moderately engaging", "Very engaging", "Extremely engaging"], type: "radio" },
+            { question: "What are the strengths of the explanations?", options: [], type: "textarea" },
+            { question: "What are the weaknesses of the explanations?", options: [], type: "textarea" },
+            { question: "The sequence of explanations on different topics felt natural.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" }, 
+            { question: "The annotations help in learning data visualization.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" },
+            { question: "The annotations are highly engaging.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" },
+            { question: "The annotations were distracting during the learning process.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" },
+            { question: "What are the strengths of the annotations?", options: [], type: "textarea" },
+            { question: "What are the weaknesses of the annotations?", options: [], type: "textarea" }
+        ];
+
+        function handleNextClick() {
+            if (currentQuestionIndex > 0) {
+                let selectedAnswer;
+                if (questions[currentQuestionIndex - 1].type === 'radio') {
+                    selectedAnswer = document.querySelector('input[name="answer"]:checked')?.value;
+                    if (!selectedAnswer) {
+                        alert('Please make a selection before proceeding.');
+                        return;
+                    }
+                } else {
+                    selectedAnswer = document.querySelector('textarea[name="answer"]')?.value;
+                    if (!selectedAnswer) {
+                        alert('Please provide an answer before proceeding.');
+                        return;
+                    }
+                }
+                submitResponse(selectedAnswer);
             } else {
-                alert('Please enter your Prolific ID.');
+                loadNextQuestion();
             }
         }
+
+        function submitResponse(selectedAnswer) {
+            const endTime = Date.now();
+            const timeSpent = (endTime - startTime) / 1000;
+            const question = questions[currentQuestionIndex - 1];
+            database.ref('responses/' + userId).push({
+                question: question.question,
+                answer: selectedAnswer,
+                timeSpent: timeSpent,
+                timestamp: new Date().toISOString()
+            }).then(() => {
+                console.log('Response saved successfully.');
+                if (currentQuestionIndex < questions.length) {
+                    loadNextQuestion();
+                } else {
+                    window.location.href = 'thanku.html';
+                }
+            }).catch(error => {
+                alert('Error saving response: ' + error.message);
+            });
+        }
+
+        function loadNextQuestion() {
+            const questionContainer = document.getElementById('questionContainer');
+            const question = questions[currentQuestionIndex];
+            let questionHtml = `<p>${question.question}</p>`;
+            if (question.type === 'radio') {
+                question.options.forEach((option, index) => {
+                    questionHtml += `<input type="radio" id="option${index}" name="answer" value="${option}">
+                                    <label for="option${index}">${option}</label><br>`;
+                });
+            } else if (question.type === 'textarea') {
+                questionHtml += `<textarea name="answer" rows="4" cols="50" placeholder="Type your answer here..."></textarea>`;
+            }
+            questionContainer.innerHTML = questionHtml;
+            currentQuestionIndex++;
+        }
+
+        // Load the first question on page load
+        window.onload = loadNextQuestion;
     </script>
 </body>
 </html>
