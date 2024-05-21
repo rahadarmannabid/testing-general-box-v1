@@ -1,79 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Next Page Survey</title>
-    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 1s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 10px 2px;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #questionContainer {
-            margin-bottom: 20px;
-        }
-        #questionContainer label {
-            display: inline-block;
-            margin-top: 10px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            width: 50%; /* Adjust the width as needed */
-            box-sizing: border-box;
-        }
-        #questionContainer label:hover {
-            transform: scale(1.05);
-        }
-        input[type="radio"] {
-            margin-right: 10px;
-        }
-        .image-container {
-            border-radius: 10px 10px 0 0;
-            overflow: hidden;
-        }
-        .image-container img {
-            display: block;
-            width: 90%; /* Full width images */
-            height: auto; /* Maintains aspect ratio */
-            border-radius: 10px 10px 0 0;
-            margin: 0 auto; /* Auto margins for horizontal centering */
-        }
-    </style>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Next Page Survey</title>
+        <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f5f5f5;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                max-width: 800px;
+                margin: 20px auto;
+                background-color: #fff;
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                animation: fadeIn 1s;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            button {
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 10px 2px;
+                cursor: pointer;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                transition: background-color 0.3s ease;
+            }
+            button:hover {
+                background-color: #45a049;
+            }
+            #questionContainer {
+                margin-bottom: 20px;
+            }
+            #questionContainer label {
+                display: inline-block;
+                margin-top: 10px;
+                cursor: pointer;
+                transition: transform 0.3s ease;
+                width: 50%; /* Adjust the width as needed */
+                box-sizing: border-box;
+            }
+            #questionContainer label:hover {
+                transform: scale(1.05);
+            }
+            input[type="radio"] {
+                margin-right: 10px;
+            }
+            .image-container {
+                border-radius: 10px 10px 0 0;
+                overflow: hidden;
+            }
+            .image-container img {
+                display: block;
+                width: 90%; /* Full width images */
+                height: auto; /* Maintains aspect ratio */
+                border-radius: 10px 10px 0 0;
+                margin: 0 auto; /* Auto margins for horizontal centering */
+            }
+        </style>
+    </head>
 <body>
     <div class="container">
         <form id="nextSurveyForm">
@@ -85,10 +85,10 @@
     </div>
 
     <script>
-        // Firebase configuration
-        var firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyAKfpkptdlkB6C51MLxAgRFwYCFpxa9zaM",
   authDomain: "eg-1-testing-general-box.firebaseapp.com",
+  databaseURL: "https://eg-1-testing-general-box-default-rtdb.firebaseio.com",
   projectId: "eg-1-testing-general-box",
   storageBucket: "eg-1-testing-general-box.appspot.com",
   messagingSenderId: "86498442548",
@@ -96,27 +96,14 @@
   measurementId: "G-ENVBCE2Z0M"
         };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        } else {
+            firebase.app(); // if already initialized, use that one
+        }
+
         const database = firebase.database();
-
-        function getCookie(name) {
-            let cookieArray = document.cookie.split(';');
-            for (let i = 0; i < cookieArray.length; i++) {
-                let cookiePair = cookieArray[i].split('=');
-                if (name == cookiePair[0].trim()) {
-                    return cookiePair[1];
-                }
-            }
-            return null;
-        }
-
-        let userId = getCookie('userId');
-        if (!userId) {
-            userId = 'user_' + Date.now();
-            document.cookie = "userId=" + userId + "; path=/";
-        }
-
+        let userId = getCookie('userId') || setupNewUser();
         let startTime = Date.now();
         let currentQuestionIndex = 0;
         const questions = [
@@ -129,74 +116,86 @@
             { question: "How engaging are the explanations?", options: ["Not engaging", "Slightly engaging", "Moderately engaging", "Very engaging", "Extremely engaging"], type: "radio" },
             { question: "What are the strengths of the explanations?", options: [], type: "textarea" },
             { question: "What are the weaknesses of the explanations?", options: [], type: "textarea" },
-            { question: "The sequence of explanations on different topics felt natural.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" }, 
-            { question: "The annotations help in learning data visualization.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" },
-            { question: "The annotations are highly engaging.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" },
-            { question: "The annotations were distracting during the learning process.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" },
-            { question: "What are the strengths of the annotations?", options: [], type: "textarea" },
-            { question: "What are the weaknesses of the annotations?", options: [], type: "textarea" }
+            { question: "The sequence of explanations on different topics felt natural.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" }
+            // { question: "The annotations help in learning data visualization.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" },
+            // { question: "The annotations are highly engaging.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" },
+            // { question: "The annotations were distracting during the learning process.", options: ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], type: "radio" },
+            // { question: "What are the strengths of the annotations?", options: [], type: "textarea" },
+            // { question: "What are the weaknesses of the annotations?", options: [], type: "textarea" }
         ];
 
+        function setupNewUser() {
+            const newUserId = 'user_' + Date.now();
+            document.cookie = "userId=" + newUserId + "; path=/";
+            return newUserId;
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
         function handleNextClick() {
-            if (currentQuestionIndex > 0) {
-                let selectedAnswer;
-                if (questions[currentQuestionIndex - 1].type === 'radio') {
-                    selectedAnswer = document.querySelector('input[name="answer"]:checked')?.value;
-                    if (!selectedAnswer) {
-                        alert('Please make a selection before proceeding.');
-                        return;
-                    }
-                } else {
-                    selectedAnswer = document.querySelector('textarea[name="answer"]')?.value;
-                    if (!selectedAnswer) {
-                        alert('Please provide an answer before proceeding.');
-                        return;
-                    }
-                }
-                submitResponse(selectedAnswer);
-            } else {
-                loadNextQuestion();
+            const selectedAnswer = getSelectedAnswer();
+            if (!selectedAnswer) {
+                alert('Please make a selection or fill out the field before proceeding.');
+                return;
+            }
+            submitResponse(selectedAnswer);
+        }
+
+        function getSelectedAnswer() {
+            const questionType = questions[currentQuestionIndex].type;
+            if (questionType === 'radio') {
+                return document.querySelector('input[name="answer"]:checked')?.value;
+            } else if (questionType === 'textarea') {
+                return document.querySelector('textarea[name="answer"]')?.value.trim();
             }
         }
 
-        function submitResponse(selectedAnswer) {
-            const endTime = Date.now();
-            const timeSpent = (endTime - startTime) / 1000;
-            const question = questions[currentQuestionIndex - 1];
-            database.ref('responses/' + userId).push({
-                question: question.question,
-                answer: selectedAnswer,
+        function submitResponse(answer) {
+            const timeSpent = (Date.now() - startTime) / 1000;
+            database.ref(`responses/${userId}`).push({
+                question: questions[currentQuestionIndex].question,
+                answer: answer,
                 timeSpent: timeSpent,
                 timestamp: new Date().toISOString()
             }).then(() => {
                 console.log('Response saved successfully.');
-                if (currentQuestionIndex < questions.length) {
-                    loadNextQuestion();
-                } else {
-                    window.location.href = 'thanku.html';
-                }
+                proceedToNextQuestion();
             }).catch(error => {
                 alert('Error saving response: ' + error.message);
             });
         }
 
-        function loadNextQuestion() {
-            const questionContainer = document.getElementById('questionContainer');
-            const question = questions[currentQuestionIndex];
-            let questionHtml = `<p>${question.question}</p>`;
-            if (question.type === 'radio') {
-                question.options.forEach((option, index) => {
-                    questionHtml += `<input type="radio" id="option${index}" name="answer" value="${option}">
-                                    <label for="option${index}">${option}</label><br>`;
-                });
-            } else if (question.type === 'textarea') {
-                questionHtml += `<textarea name="answer" rows="4" cols="50" placeholder="Type your answer here..."></textarea>`;
+        function proceedToNextQuestion() {
+            if (++currentQuestionIndex < questions.length) {
+                loadNextQuestion();
+            } else {
+                window.location.href = 'thanku.html'; // Redirect when done
             }
-            questionContainer.innerHTML = questionHtml;
-            currentQuestionIndex++;
         }
 
-        // Load the first question on page load
+        function loadNextQuestion() {
+            const question = questions[currentQuestionIndex];
+            const questionContainer = document.getElementById('questionContainer');
+            questionContainer.innerHTML = generateQuestionHTML(question);
+        }
+
+        function generateQuestionHTML(question) {
+            let html = `<p>${question.question}</p>`;
+            if (question.type === 'radio') {
+                question.options.forEach((option, index) => {
+                    html += `<label><input type="radio" name="answer" value="${option}"> ${option}</label><br>`;
+                });
+            } else if (question.type === 'textarea') {
+                html += `<textarea name="answer" rows="4" cols="50" placeholder="Type your answer here..."></textarea>`;
+            }
+            return html;
+        }
+
         window.onload = loadNextQuestion;
     </script>
 </body>

@@ -1,97 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demographics Survey</title>
-    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 1s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 10px 2px;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #questionContainer {
-            margin-bottom: 20px;
-        }
-        #questionContainer label {
-            display: block;
-            margin-top: 10px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        #questionContainer label:hover {
-            transform: scale(1.05);
-        }
-        input[type="radio"], input[type="checkbox"] {
-            margin-right: 10px;
-        }
-        textarea {
-            width: 100%;
-            height: 100px;
-            margin-top: 10px;
-        }
-    </style>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Next Page Survey</title>
+        <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f5f5f5;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                max-width: 800px;
+                margin: 20px auto;
+                background-color: #fff;
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                animation: fadeIn 1s;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            button {
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 10px 2px;
+                cursor: pointer;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                transition: background-color 0.3s ease;
+            }
+            button:hover {
+                background-color: #45a049;
+            }
+            #questionContainer {
+                margin-bottom: 20px;
+            }
+            #questionContainer label {
+                display: inline-block;
+                margin-top: 10px;
+                cursor: pointer;
+                transition: transform 0.3s ease;
+                width: 50%; /* Adjust the width as needed */
+                box-sizing: border-box;
+            }
+            #questionContainer label:hover {
+                transform: scale(1.05);
+            }
+            input[type="radio"] {
+                margin-right: 10px;
+            }
+            .image-container {
+                border-radius: 10px 10px 0 0;
+                overflow: hidden;
+            }
+            .image-container img {
+                display: block;
+                width: 90%; /* Full width images */
+                height: auto; /* Maintains aspect ratio */
+                border-radius: 10px 10px 0 0;
+                margin: 0 auto; /* Auto margins for horizontal centering */
+            }
+        </style>
+    </head>
 <body>
     <div class="container">
         <form id="nextSurveyForm">
-            <div id="questionContainer">
-                <!-- Question content dynamically inserted here -->
-            </div>
+            <div id="questionContainer"></div>
             <div style="text-align: center;">
-                <button type="button" id="nextButton" onclick="handleNextClick()">Next</button>
+                <button type="button" onclick="handleNextClick()">Next</button>
             </div>
         </form>
     </div>
 
-
-
     <script>
-        firebase.initializeApp({
+        const firebaseConfig = {
             apiKey: "AIzaSyAKfpkptdlkB6C51MLxAgRFwYCFpxa9zaM",
-    authDomain: "eg-1-testing-general-box.firebaseapp.com",
-    projectId: "eg-1-testing-general-box",
-    storageBucket: "eg-1-testing-general-box.appspot.com",
-    messagingSenderId: "86498442548",
-    appId: "1:86498442548:web:75448f4aefbd68d8a47961",
-    measurementId: "G-ENVBCE2Z0M"
-        });
-        const database = firebase.database();
+  authDomain: "eg-1-testing-general-box.firebaseapp.com",
+  databaseURL: "https://eg-1-testing-general-box-default-rtdb.firebaseio.com",
+  projectId: "eg-1-testing-general-box",
+  storageBucket: "eg-1-testing-general-box.appspot.com",
+  messagingSenderId: "86498442548",
+  appId: "1:86498442548:web:75448f4aefbd68d8a47961",
+  measurementId: "G-ENVBCE2Z0M"
+        };
 
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        } else {
+            firebase.app(); // if already initialized, use that one
+        }
+
+        const database = firebase.database();
+        let userId = getCookie('userId') || setupNewUser();
+        let startTime = Date.now();
+        let currentQuestionIndex = 0;
         const questions = [
             { question: "What is your current education level?", options: ["High School", "Associate Degree", "Bachelor's Degree", "Master's Degree", "Doctorate or Higher", "Other"], type: "radio" },
             { question: "What is your level of expertise in interpreting these data visualizations?", options: ["Beginner", "Intermediate", "Advanced", "Expert"], type: "radio" },
@@ -110,65 +124,79 @@
             // { question: "What are the weaknesses of the annotations?", options: [], type: "textarea" }
         ];
 
-        let currentQuestionIndex = 0;
+        function setupNewUser() {
+            const newUserId = 'user_' + Date.now();
+            document.cookie = "userId=" + newUserId + "; path=/";
+            return newUserId;
+        }
 
-function loadQuestion() {
-    const questionContainer = document.getElementById('questionContainer');
-    const question = questions[currentQuestionIndex];
-    let contentHtml = `<h3>${question.question}</h3>`;
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
 
-    if(question.type === "textarea") {
-        contentHtml += `<textarea name="answer"></textarea>`;
-    } else {
-        question.options.forEach((option, index) => {
-            contentHtml += `<label><input type="${question.type}" name="answer" value="${option}">${option}</label>`;
-        });
-    }
+        function handleNextClick() {
+            const selectedAnswer = getSelectedAnswer();
+            if (!selectedAnswer) {
+                alert('Please make a selection or fill out the field before proceeding.');
+                return;
+            }
+            submitResponse(selectedAnswer);
+        }
 
-    questionContainer.innerHTML = contentHtml;
-}
+        function getSelectedAnswer() {
+            const questionType = questions[currentQuestionIndex].type;
+            if (questionType === 'radio') {
+                return document.querySelector('input[name="answer"]:checked')?.value;
+            } else if (questionType === 'textarea') {
+                return document.querySelector('textarea[name="answer"]')?.value.trim();
+            }
+        }
 
-function handleNextClick() {
-    // This variable will check if an answer has been provided
-    let selectedAnswer;
+        function submitResponse(answer) {
+            const timeSpent = (Date.now() - startTime) / 1000;
+            database.ref(`responses/${userId}`).push({
+                question: questions[currentQuestionIndex].question,
+                answer: answer,
+                timeSpent: timeSpent,
+                timestamp: new Date().toISOString()
+            }).then(() => {
+                console.log('Response saved successfully.');
+                proceedToNextQuestion();
+            }).catch(error => {
+                alert('Error saving response: ' + error.message);
+            });
+        }
 
-    // Check if the current question is a textarea or a radio input
-    if (questions[currentQuestionIndex].type === "textarea") {
-        selectedAnswer = document.querySelector('[name="answer"]').value.trim(); // Check textarea input
-    } else {
-        selectedAnswer = document.querySelector('[name="answer"]:checked')?.value; // Check radio input
-    }
+        function proceedToNextQuestion() {
+            if (++currentQuestionIndex < questions.length) {
+                loadNextQuestion();
+            } else {
+                window.location.href = 'thanku.html'; // Redirect when done
+            }
+        }
 
-    // Ensure an answer has been provided before allowing user to proceed
-    if (!selectedAnswer) {
-        alert('Please answer the question before proceeding.');
-        return;
-    }
+        function loadNextQuestion() {
+            const question = questions[currentQuestionIndex];
+            const questionContainer = document.getElementById('questionContainer');
+            questionContainer.innerHTML = generateQuestionHTML(question);
+        }
 
-    // Submit the response
-    submitResponse(selectedAnswer);
+        function generateQuestionHTML(question) {
+            let html = `<p>${question.question}</p>`;
+            if (question.type === 'radio') {
+                question.options.forEach((option, index) => {
+                    html += `<label><input type="radio" name="answer" value="${option}"> ${option}</label><br>`;
+                });
+            } else if (question.type === 'textarea') {
+                html += `<textarea name="answer" rows="4" cols="50" placeholder="Type your answer here..."></textarea>`;
+            }
+            return html;
+        }
 
-    // Move to the next question or finalize the survey
-    currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
-        loadQuestion();
-    } else {
-        document.getElementById('nextButton').innerText = 'Finish';
-        document.getElementById('nextButton').onclick = finalizeSurvey;
-    }
-}
-
-
-function submitResponse(answer) {
-    console.log(`Question: ${questions[currentQuestionIndex].question}, Answer: ${answer}`);
-    // Here you can submit the response to Firebase
-}
-
-function finalizeSurvey() {
-    window.location.href = 'thanku.html'; // Redirect to thank you page
-}
-
-loadQuestion(); // Initial call to load the first question
+        window.onload = loadNextQuestion;
     </script>
 </body>
 </html>
